@@ -48,7 +48,22 @@ class CodeSystem(_CodeSystemBase):
     owner_id: int
     date_created: _dt.datetime
     date_last_updated: _dt.datetime
-    user_last_updated: int
+
+    class Config:
+        orm_mode = True
+
+class _ConceptBase(_pydantic.BaseModel):
+    code: str
+    display: str
+
+class ConceptCreate(_ConceptBase):
+    pass
+
+class Concept(_ConceptBase):
+    id: int
+    code_system_id: int
+    date_created: _dt.datetime
+    date_last_updated: _dt.datetime
 
     class Config:
         orm_mode = True

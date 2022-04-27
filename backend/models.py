@@ -49,6 +49,7 @@ class Concept(_database.Base):
     __tablename__ = "concepts"
     id = _sql.Column(_sql.Integer, primary_key=True, index=True)
     code = _sql.Column(_sql.String, index=True)
+    display = _sql.Column(_sql.String, index=True)
     code_system_id = _sql.Column(_sql.Integer, _sql.ForeignKey("code_systems.id"))
     date_created = _sql.Column(_sql.DateTime, default=_dt.datetime.utcnow)
     date_last_updated = _sql.Column(_sql.DateTime, default=_dt.datetime.utcnow, onupdate=_dt.datetime.utcnow)
