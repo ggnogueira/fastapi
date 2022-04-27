@@ -73,6 +73,28 @@ async def update_code_system(code_system_id: int, code_system: _schemas.CodeSyst
     await _services.update_code_system(code_system_id=code_system_id, code_system=code_system, user=user, db=db)
     return {"message": "Successfully Updated"}
 
+@app.post("/api/concepts", response_model=_schemas.Concept)
+async def create_concept(concept: _schemas.ConceptCreate, code_system_id: int, user: _schemas.User = _fastapi.Depends(_services.get_current_user), db: _orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.create_concept(code_system_id=code_system_id, db=db, concept=concept, user=user)
+
+@app.get("/api/concepts", response_model=List[_schemas.Concept])
+async def get_concepts(code_system_id: int, user: _schemas.User = _fastapi.Depends(_services.get_current_user), db: _orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.get_concepts(code_system_id=code_system_id, user=user, db=db)
+
+@app.get("/api/concepts/{code_system_id}/{code}", status_code=200)
+async def get_concept(code: str, code_system_id: int, user: _schemas.User = _fastapi.Depends(_services.get_current_user), db: _orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.get_concept(code=code, code_system_id=code_system_id, user=user, db=db)
+
+@app.delete("/api/concepts/{code_system_id}/{code}", status_code=204)
+async def delete_concept(code: str, code_system_id: int, user: _schemas.User  = _fastapi.Depends(_services.get_current_user), db: _orm.Session = _fastapi.Depends(_services.get_db)):
+    await _services.delete_concept(code=code, code_system_id=code_system_id, user=user, db=db)
+    return {"message": "Successfully Updated"}
+
+@app.put("/api/concepts/{code_system_id}/{code}", status_code=200)
+async def update_concept(code: str, concept: _schemas.ConceptCreate, code_system_id: int, user: _schemas.User = _fastapi.Depends(_services.get_current_user), db: _orm.Session = _fastapi.Depends(_services.get_db)):
+    await _services.update_concept(code=code, code_system_id=code_system_id, concept=concept, user=user, db=db)
+    return {"message": "Successfully Updated"}
+
 
 @app.get("/api")
 async def root():

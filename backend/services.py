@@ -161,3 +161,61 @@ async def update_code_system(code_system_id: int, code_system: _schemas.CodeSyst
     db.refresh(code_system_db)
 
     return _schemas.CodeSystem.from_orm(code_system_db)
+
+async def create_concept(code_system_id: int, user: _schemas.User, db: _orm.Session, concept: _schemas.ConceptCreate):
+    code_system = await _code_system_selector(code_system_id=code_system_id, user=user, db=db)
+    
+    concept = _models.Concept(**concept.dict(), code_system_id = code_system.id)
+    db.add(concept)
+    db.commit()
+    db.refresh(concept)
+    return _schemas.Concept.from_orm(concept)
+
+async def get_concepts(code_system_id: int, user: _schemas.User, db: _orm.Session):
+    code_system = await _code_system_selector(code_system_id=code_system_id, user=user, db=db)
+
+    concepts = db.query(_models.Concept).filter_by(code_system_id = code_system.id)
+    return list(map(_schemas.Concept.from_orm, concepts))
+
+async def _concept_selector(code: str, code_system: _schemas.CodeSystem, db: _orm.Session):
+    concept = (
+        db.query(_models.Concept)
+        .filter_by(code_system_id=code_system.id)
+        .filter(_models.Concept.code == code).first()
+    )
+
+    if concept is None:
+        raise _fastapi.HTTPException(status_code=404, detail="Concept not found")
+    
+    return concept
+
+async def get_concept(code: str, code_system_id: int, user: _schemas.User, db: _orm.Session):
+    code_system = await _code_system_selector(code_system_id=code_system_id, user=user, db=db)
+
+    concept = await _concept_selector(code=code, code_system=code_system, db=db)
+    return _schemas.Concept.from_orm(concept)
+
+async def delete_concept(code: str, code_system_id: int, user: _schemas.User, db: _orm.Session):
+    code_system = await _code_system_selector(code_system_id=code_system_id, user=user, db=db)
+    if code_system is None:
+        raise _fastapi.HTTPException(status_code=404, detail="Code System not found")
+    
+    concept = await _concept_selector(code=code, code_system=code_system, db=db)
+    db.delete(concept)
+    db.commit()
+
+async def update_concept(code: str, concept: _schemas.ConceptCreate, code_system_id: int, user: _schemas.User, db: _orm.Session):
+    code_system = await _code_system_selector(code_system_id=code_system_id, user=user, db=db)
+    if code_system is None:
+        raise _fastapi.HTTPException(status_code=404, detail="Code System not found")
+    
+    concept_db = await _concept_selector(code=code, code_system=code_system, db=db)
+
+    concept_db.code = concept.code
+    concept_db.display = concept.display
+    concept_db.date_last_updated = _dt.datetime.utcnow()
+
+    db.commit()
+    db.refresh(concept_db)
+
+    return _schemas.Concept.from_orm(concept_db)
