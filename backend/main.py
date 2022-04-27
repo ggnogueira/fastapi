@@ -98,4 +98,4 @@ async def update_concept(code: str, concept: _schemas.ConceptCreate, code_system
 
 @app.get("/api")
 async def root():
-    return {"message": "First Try"}
+    return {"message": "Code System Manager"}
