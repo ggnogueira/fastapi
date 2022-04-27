@@ -116,3 +116,48 @@ async def update_lead(lead_id: int, lead: _schemas.LeadCreate, user: _schemas.Us
 
     return _schemas.Lead.from_orm(lead_db)
 
+async def create_code_system(user: _schemas.User, db: _orm.Session, code_system: _schemas.CodeSystemCreate):
+    code_system = _models.CodeSystem(**code_system.dict(), owner_id = user.id)
+    db.add(code_system)
+    db.commit()
+    db.refresh(code_system)
+    return _schemas.CodeSystem.from_orm(code_system)
+
+async def get_code_systems(user: _schemas.User, db: _orm.Session):
+    code_systems = db.query(_models.CodeSystem).filter_by(owner_id = user.id)
+    return list(map(_schemas.CodeSystem.from_orm, code_systems))
+
+async def _code_system_selector(code_system_id: int, user: _schemas.User, db: _orm.Session):
+    code_system = (
+        db.query(_models.CodeSystem)
+        .filter_by(owner_id=user.id)
+        .filter(_models.CodeSystem.id == code_system_id).first()
+    )
+
+    if code_system is None:
+        raise _fastapi.HTTPException(status_code=404, detail="Code System not found")
+    
+    return code_system
+
+async def get_code_system(code_system_id: int, user: _schemas.User, db: _orm.Session):
+    code_system = await _code_system_selector(code_system_id=code_system_id, user=user, db=db)
+
+    return _schemas.CodeSystem.from_orm(code_system)
+
+async def delete_code_system(code_system_id: int, user: _schemas.User, db: _orm.Session):
+    code_system = await _code_system_selector(code_system_id=code_system_id, user=user, db=db)
+    db.delete(code_system)
+    db.commit()
+
+async def update_code_system(code_system_id: int, code_system: _schemas.CodeSystemCreate, user: _schemas.User, db: _orm.Session):
+    code_system_db = await _code_system_selector(code_system_id=code_system_id, user=user, db=db)
+
+    code_system_db.version = code_system.version
+    code_system_db.system = code_system.system
+    code_system_db.name = code_system.name
+    code_system_db.date_last_updated = _dt.datetime.utcnow()
+
+    db.commit()
+    db.refresh(code_system_db)
+
+    return _schemas.CodeSystem.from_orm(code_system_db)

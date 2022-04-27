@@ -51,6 +51,29 @@ async def update_lead(lead_id: int, lead: _schemas.LeadCreate, user: _schemas.Us
     await _services.update_lead(lead_id=lead_id, lead=lead, user=user, db=db)
     return {"message": "Successfully Updated"}
 
+@app.post("/api/codesystems", response_model=_schemas.CodeSystem)
+async def create_code_system(code_system: _schemas.CodeSystemCreate, user: _schemas.User = _fastapi.Depends(_services.get_current_user), db: _orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.create_code_system(user=user, db=db, code_system=code_system)
+
+@app.get("/api/codesystems", response_model=List[_schemas.CodeSystem])
+async def get_code_systems(user: _schemas.User = _fastapi.Depends(_services.get_current_user), db: _orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.get_code_systems(user=user, db=db)
+
+@app.get("/api/codesystems/{code_system_id}", status_code=200)
+async def get_code_system(code_system_id: int, user: _schemas.User = _fastapi.Depends(_services.get_current_user), db: _orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.get_code_system(code_system_id=code_system_id, user=user, db=db)
+
+@app.delete("/api/codesystems/{code_system_id}", status_code=204)
+async def delete_code_system(code_system_id: int, user: _schemas.User = _fastapi.Depends(_services.get_current_user), db: _orm.Session = _fastapi.Depends(_services.get_db)):
+    await _services.delete_code_system(code_system_id=code_system_id, user=user, db=db)
+    return {"message": "Successfully Deleted"}
+
+@app.put("/api/codesystems/{code_system_id}", status_code=200)
+async def update_code_system(code_system_id: int, code_system: _schemas.CodeSystemCreate, user: _schemas.User = _fastapi.Depends(_services.get_current_user), db: _orm.Session = _fastapi.Depends(_services.get_db)):
+    await _services.update_code_system(code_system_id=code_system_id, code_system=code_system, user=user, db=db)
+    return {"message": "Successfully Updated"}
+
+
 @app.get("/api")
 async def root():
     return {"message": "First Try"}
