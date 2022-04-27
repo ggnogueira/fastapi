@@ -34,3 +34,21 @@ class Lead(_LeadBase):
 
     class Config:
         orm_mode = True
+
+class _CodeSystemBase(_pydantic.BaseModel):
+    version: str
+    system: str
+    name: str
+
+class CodeSystemCreate(_CodeSystemBase):
+    pass
+
+class CodeSystem(_CodeSystemBase):
+    id: int
+    owner_id: int
+    date_created: _dt.datetime
+    date_last_updated: _dt.datetime
+    user_last_updated: int
+
+    class Config:
+        orm_mode = True
