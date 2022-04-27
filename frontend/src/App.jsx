@@ -5,6 +5,7 @@ import Login from "./components/Login";
 import Table from "./components/Table";
 import LeadModal from "./components/LeadModal";
 import { UserContext } from "./context/UserContext";
+import CodeSystem from "./components/CodeSystem";
 
 const App = () => {
   const [message, setMessage] = useState("");
@@ -41,7 +42,8 @@ const App = () => {
               <Register/><Login/>
             </div>
           ) : (
-            <Table />
+            <CodeSystem />
+            //<Table />
           )}
         </div>
         <div className="column"></div>
