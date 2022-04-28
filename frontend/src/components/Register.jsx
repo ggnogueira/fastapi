@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import ErrorMessage from "./ErrorMessage";
+import { useNavigate  } from "react-router-dom";
 
 const Register = () => {
     const [email, setEmail] = useState("");
@@ -8,6 +9,8 @@ const Register = () => {
     const [confirmationPassword, setconfirmationPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [, setToken] = useContext(UserContext);
+    const navigate = useNavigate ();
+
     const submitRegistration = async () => {
         const requestOptions = {
             method: "POST",
@@ -23,6 +26,7 @@ const Register = () => {
             setErrorMessage(data.detail);
         } else {
             setToken(data.access_token);
+            navigate('/codesystems')
         }
     };
 
