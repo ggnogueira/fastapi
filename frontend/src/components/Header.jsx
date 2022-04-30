@@ -1,11 +1,14 @@
 import React, { useContext } from "react";
 import { UserContext } from "../context/UserContext";
+import { useNavigate  } from "react-router-dom";
 
 const Header = ( { title }) => {
     const [token, setToken] = useContext(UserContext);
+    const navigate = useNavigate ();
 
     const handleLogout = () => {
         setToken(null);
+        navigate('/')
     };
 
     return (
@@ -13,7 +16,7 @@ const Header = ( { title }) => {
             <nav className="navbar is-primary" role="navigation" aria-label="main navigation">
                 <div id="navbarBasicExample" className="navbar-menu">
                     <div className="navbar-start">
-                    <a className="navbar-item" href="/">
+                    <a className="navbar-item" {...!token ? {href: "/"} : {href: "/codesystems"}}>
                         Home
                     </a>
 

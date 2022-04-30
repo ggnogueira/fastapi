@@ -1,12 +1,14 @@
 import React, { useState, useContext } from "react";
 import ErrorMessage from "./ErrorMessage";
 import { UserContext } from "../context/UserContext";
+import { useNavigate  } from "react-router-dom";
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [, setToken] = useContext(UserContext);
+    const navigate = useNavigate ();
 
     const submitLogin = async () => {
         const requestOptions = {
@@ -26,6 +28,7 @@ const Login = () => {
             setErrorMessage(data.detail);
         } else {
             setToken(data.access_token);
+            navigate('/codesystems')
         }
     };
 

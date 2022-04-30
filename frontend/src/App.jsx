@@ -1,15 +1,14 @@
-import React, { useEffect, useState, useContext } from "react"
-import Register from "./components/Register";
+import React, { useEffect, useState } from "react"
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Header from "./components/Header";
-import Login from "./components/Login";
-import Table from "./components/Table";
-import LeadModal from "./components/LeadModal";
-import { UserContext } from "./context/UserContext";
+import Welcome from "./components/Welcome";
+//import { UserContext } from "./context/UserContext";
 import CodeSystem from "./components/CodeSystem";
+import CodeSystemDetails from "./components/CodeSystemDetails";
 
 const App = () => {
   const [message, setMessage] = useState("");
-  const [token] = useContext(UserContext);
+  //const [token] = useContext(UserContext);
 
   const getWelcomeMessage = async () => {
     const requestOptions = {
@@ -32,23 +31,14 @@ const App = () => {
     getWelcomeMessage();
   }, []);
   return (
-    <>
+    <BrowserRouter>
       <Header title={message}/>
-      <div className="columns">
-        <div className="column"></div>
-        <div className="column m-5 is-two-thirds">
-          {!token ? (
-            <div className="columns">
-              <Register/><Login/>
-            </div>
-          ) : (
-            <CodeSystem />
-            //<Table />
-          )}
-        </div>
-        <div className="column"></div>
-      </div>
-    </>
+        <Routes>
+          <Route path="/" element={<Welcome/>}/>
+          <Route path="/codesystems" element={<CodeSystem/>}/>
+          <Route path="/codesystems/:id" element={<CodeSystemDetails/>}/>
+        </Routes>
+    </BrowserRouter>
   );
 }
 
