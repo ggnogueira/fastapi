@@ -16,7 +16,7 @@ const Header = ( { title }) => {
             <nav className="navbar is-primary" role="navigation" aria-label="main navigation">
                 <div id="navbarBasicExample" className="navbar-menu">
                     <div className="navbar-start">
-                    <a className="navbar-item" href="/">
+                    <a className="navbar-item" {...!token ? {href: "/"} : {href: "/codesystems"}}>
                         Home
                     </a>
 

@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import moment from "moment";
 import ErrorMessage from "./ErrorMessage";
 import { UserContext } from "../context/UserContext";
-import ConceptModal from "./CodeSystemModal";
+import ConceptModal from "./ConceptModal";
 import { useParams } from "react-router-dom";
 
 const CodeSystemDetails = () => {
@@ -15,12 +15,12 @@ const CodeSystemDetails = () => {
     const [loaded, setLoaded] = useState(false);
     const [id, setId] = useState(null);
 
-    const handleUpdate = async (id) => {
-        setId(id);
+    const handleUpdate = async (code) => {
+        setId(code);
         setActiveModal(true);
     }
     
-    const handleDelete = async (id) => {
+    const handleDelete = async (code) => {
         const requestOptions = {
             method: "DELETE",
             headers: {
@@ -28,7 +28,7 @@ const CodeSystemDetails = () => {
                 "Authorization": `Bearer ${token}`,
             },
         };
-        const response = await fetch(`/api/concepts/${codeSystemId}/${id}`, requestOptions);
+        const response = await fetch(`/api/concepts/${codeSystemId}/${code}`, requestOptions);
         if (!response.ok) {
             setErrorMessage("Something went wrong when deleting concept.");
         }
@@ -68,12 +68,12 @@ const CodeSystemDetails = () => {
 
     return (
         <>
-            <h1>{codeSystemId}</h1>
             <ConceptModal 
                 active={activeModal} 
                 handleModal={handleModal} 
                 token={token} 
-                id={id} 
+                id={id}
+                codeSystemId={codeSystemId}
                 setErrorMessage={setErrorMessage}
             />
             <button 
@@ -102,13 +102,13 @@ const CodeSystemDetails = () => {
                                 <td>
                                     <button 
                                         className="button mr-2 is-info is-light"
-                                        onClick={() => handleUpdate(concept.id)}
+                                        onClick={() => handleUpdate(concept.code)}
                                     >
                                         Update
                                     </button>
                                     <button 
                                         className="button mr-2 is-danger is-light"
-                                        onClick={() => handleDelete(concept.id)}
+                                        onClick={() => handleDelete(concept.code)}
                                     >
                                         Delete
                                     </button>

@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 
-const ConceptModal = ({active, handleModal, token, id, setErrorMesssage}) => {
+const ConceptModal = ({active, handleModal, token, id, codeSystemId, setErrorMesssage}) => {
     const [code, setCode] = useState("");
     const [display, setDisplay] = useState("");
-    const codeSystemId = 0;
 
     useEffect(() => {
         const getConcept = async () => {
@@ -14,9 +13,10 @@ const ConceptModal = ({active, handleModal, token, id, setErrorMesssage}) => {
                     "Authorization": `Bearer ${token}`,
                 },
             };
-            const response = await fetch(`/api/concepts/${id}/`, requestOptions);
+            const response = await fetch(`/api/concepts/${codeSystemId}/${id}`, requestOptions);
             if(!response.ok) {
-                setErrorMesssage("Something went wrong. Could not load lead.");
+                //setErrorMesssage("Something went wrong. Could not load lead.");
+                console.log("Something went wrong. Could not load lead.");
             } else {
                 const data = await response.json();
                 setCode(data.code);
@@ -29,9 +29,8 @@ const ConceptModal = ({active, handleModal, token, id, setErrorMesssage}) => {
     }, [id, token]);
 
     const cleanFormData = () => {
-        setVersion("");
-        setSystem("");
-        setName("");
+        setCode("");
+        setDisplay("");
     }
 
     const handleCreateConcept = async (e) => {
@@ -48,9 +47,10 @@ const ConceptModal = ({active, handleModal, token, id, setErrorMesssage}) => {
             }),
         };    
         
-        const response = await fetch(`/api/concepts/${id}/`, requestOptions);
+        const response = await fetch(`/api/concepts?code_system_id=${codeSystemId}`, requestOptions);
         if(!response.ok) {
-            setErrorMesssage("Something went wrong when creating concept.");
+            //setErrorMesssage("Something went wrong when creating concept.");
+            console.log("Something went wrong when creating concept.");
         } else {
             cleanFormData();
             handleModal();
@@ -71,9 +71,10 @@ const ConceptModal = ({active, handleModal, token, id, setErrorMesssage}) => {
                 display: display
             }),
         };
-        const response = await fetch(`/api/concept/${codeSystemId}/${id}`, requestOptions);
+        const response = await fetch(`/api/concepts/${codeSystemId}/${id}`, requestOptions);
         if(!response.ok) {
-            setErrorMesssage("Something went wrong when updating concept.");
+            //setErrorMesssage("Something went wrong when updating concept.");
+            console.log("Something went wrong when updating concept.")
         } else {
             cleanFormData();
             handleModal();
@@ -98,7 +99,7 @@ const ConceptModal = ({active, handleModal, token, id, setErrorMesssage}) => {
                                     type="text" 
                                     placeholder="Enter the concept code"
                                     value={code}
-                                    onChange={(e) => setVersion(e.target.value)}
+                                    onChange={(e) => setCode(e.target.value)}
                                     className="input"
                                     required
                                 />
@@ -111,7 +112,7 @@ const ConceptModal = ({active, handleModal, token, id, setErrorMesssage}) => {
                                     type="text" 
                                     placeholder="Enter display string."
                                     value={display}
-                                    onChange={(e) => setSystem(e.target.value)}
+                                    onChange={(e) => setDisplay(e.target.value)}
                                     className="input"
                                     required
                                 />
